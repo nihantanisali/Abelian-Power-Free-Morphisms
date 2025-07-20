@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
 ###########################################################################
 ### Chapter 3 / Theorem .. all results
 ###########################################################################
@@ -182,7 +176,7 @@ def avoids_abelian_k_power(seq: str, k: int) -> bool:
     for block_len in range(n // k, 0, -1):             # ↓ big → small
         full_len = block_len * k                       # the length of the longest tested factor 
         for start in range(n - full_len + 1):
-            # the firs block used as a 'template' 
+            # the first block used as a 'template' 
             tpl = sorted(seq[start : start + block_len])
 
             # checks whether the other (k-1) block is a permutation of the first one.
@@ -303,10 +297,7 @@ def is_realisation(word: str,
 def find_realising_factors(text: str,
                            template: Tuple[Letter | ParikhVec, ...]
                            ) -> List[Tuple[int, int, str]]:
-    """
-    text içindeki tüm faktörleri (uzunluğu büyükten küçüğe) dolaşır,
-    template'i gerçekleştirenleri [(baş, son, faktör), …] biçiminde döndürür.
-    """
+    
     A = template[:9]
     D = template[9:]
     k = 8
@@ -460,9 +451,6 @@ if not is_avoid and word_t8 in applyh_iterative('0',6): #checks if word_t8 is a 
 
 #uncomment to see the factor
 #print(info)
-
-
-# In[ ]:
 
 
 
