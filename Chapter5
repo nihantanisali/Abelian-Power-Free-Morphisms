@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
-
-
 ############################################
 # Theorem 5.1
 
@@ -166,10 +163,5 @@ print('The total number of ancestors is ',len(Q[0]),', found in',Q[1],'generatio
 print('Hence we can check whether h^4 is abelian 5-power free.')
 if word_avoid_5_power:
     print('h^4(a), and hence h^omega(a), is abelian 5 power free')
-
-
-# In[ ]:
-
-
 
 
