@@ -120,29 +120,7 @@ def parents(t):  # Finds the parents of a template t
 
 t=   [n,n,n,n,n,n,      0, 0,   0, 0,    0, 0,    0, 0]# The template for Abelian 8-powers
 
-def ancestors1(T):  # closure of parents
-    level = 0  # how many iterations of parents to get the closure
-    V = set(map(tuple, T)) # current list of ancestors
-    U = list(T)  # new ancestors
-    
-    while (len(U) > 0):
-        newtem =  []
-        newtem=set(map(tuple, newtem))
-        for u in U:
-            newtem=newtem.union(set(map(tuple, parents(u))))    
-            
-        newtem=newtem.difference(V)
-        V = V.union(newtem)
-        
-        newtem=list(newtem)
-        U = newtem
-
-        
-        if len(U) > 0: level = level + 1
-        print('at level',level,'there are',len(U),'new templates.')
-    return [V, level]
-
-def ancestors(T, dtype = np.int8):  # closure of parents
+def ancestors(T):  # closure of parents
     level = 0  # how many iterations of parents to get the closure
     V = set(map(tuple, T))  # current list of ancestors
     U = list(T)  # new ancestors
