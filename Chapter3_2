@@ -381,8 +381,8 @@ def is_realised_parallel(template):
 
 if __name__ == '__main__':
     with ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-        resultsbig = list(executor.map(is_realised_parallel, Q, chunksize=64))
-    R1 = resultsbig
-    if all(not x for x in R1):
+        results = list(executor.map(is_realised_parallel, Q, chunksize=64))
+    R = results
+    if all(not x for x in R):
         print('* The templates does not appear in a factor of length <= ',Search_bound,'.\n  Hence h^ω(a) is 14-abelian power free.')  
 
