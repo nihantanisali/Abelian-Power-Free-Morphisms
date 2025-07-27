@@ -15,13 +15,8 @@ def avoids_abelian_k_power(sequence: str, k: int) -> bool:
     return True
 
 
-
 ##given a sequence extends it to all valid continuations
 def extend_partial_sequence(n: int, k: int, forbidden_substrings: list[str], current_sequence: str, results: list[str]) -> None:
-    """
-    Geri izlemeli (backtracking) şekilde diziyi kurar.
-    Kurallar ihlal edilirse o dal erken kesilir.
-    """
     if len(current_sequence) == n:
         results.append(current_sequence)
         return
@@ -69,12 +64,6 @@ valid_sequences_prop_4_3_length25 = generate_valid_binary_sequences(25, forbidde
 
 valid_sequences_prop_4_4_length77 = generate_valid_binary_sequences(77, forbidden_substrings_prop_4_4, k_prop_4_4 )
 valid_sequences_prop_4_4_length78 = generate_valid_binary_sequences(78, forbidden_substrings_prop_4_4, k_prop_4_4)
-
-
-
-
-
-
 
 
 ######################################################################
