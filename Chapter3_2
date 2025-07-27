@@ -155,13 +155,9 @@ def ancestors_with_levels(T):
     all_ancestors = list(V)
     return levels, all_ancestors
 
-
-
 ############################################################################
 #     Filtering Factors
 ############################################################################
-
-
 
 ##INPUT:  a string: word, a natural number: mod (n), a natural number: residue class(r), a natural number: max length
 ##OUTPUT: all different substrings of the word having length L where L= r (mod n) and L<max length
@@ -173,7 +169,6 @@ def factors_len_mod(word: str, mod: int, residue: int, max_len: int | None = Non
         for k in range(1, max_k + 1) if k % mod == residue
         for i in range(n - k + 1)
     }
-
 
 AMAP: Dict[int, str] = {0: "0", 1: "1", 2: ""}
 
@@ -193,12 +188,9 @@ def minimal_realisation(tpl):
     fixed1 = sum(1 for x in a if x == 1)
     Lmin = fixed0 + fixed1 + sum(b0+b1 for b0,b1 in blocks)
     return  int(Lmin)
-
-
 ############################################################################
 #      Realisation check
 ############################################################################
-
 def split_template(template: List[int]) -> Tuple[List[int], List[Tuple[int, int]]]:
     if len(template) != 41:
         raise ValueError("Templates consist of 41 numbers!: 15 a_i + 26 d_ij.")
@@ -216,7 +208,6 @@ def cumulative_deltas(d_pairs: List[Tuple[int, int]]) -> List[int]:
         s += d_pairs[i][0] + d_pairs[i][1]
         cum.append(s)
     return cum         # 14 integer values
-
 
 def realises_template(word: str, template: List[int]) -> bool:
     template = [int(x) for x in template]  
@@ -277,8 +268,6 @@ def realises_template(word: str, template: List[int]) -> bool:
             return False
 
     return True
-
-
 
 ##INPUT: an array of length A of templates, a word, and a maximum size for the factor length
 ##OUTPUT= an array of length A of true-false values: true if a factor of length <=factor_size is a realisation of the template
@@ -343,11 +332,7 @@ t4_6=[0,0,0,    1,1,1,    0,2,0,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,  
 t4_7=[0,0,0,    1,1,1,    0,2,1,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  1,-1,  0,0,   0,0,   0,0, -1,0,  0,1,  0,0]
 t4_8=[0,0,0,    1,1,1,    0,2,1,    0,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  1,-1, -1,1,  1,-1,   0,0, -1,0,  0,1,  0,0]
 
-
-
 T=[t1_1,t1_2,t1_3,t1_4, t1_5,t1_6,t1_7,t1_8,  t2_1,t2_2,t2_3,t2_4, t2_5,t2_6,t2_7,t2_8, t3_1,t3_2,t3_3,t3_4, t3_5,t3_6,t3_7,t3_8,t4_1,t4_2,t4_3,t4_4, t4_5,t4_6,t4_7,t4_8]
-
-
 
 ############################################################################
 #Ancestors calculation 
@@ -385,4 +370,3 @@ if __name__ == '__main__':
     R = results
     if all(not x for x in R):
         print('* The templates does not appear in a factor of length <= ',Search_bound,'.\n  Hence h^ω(a) is 14-abelian power free.')  
-
