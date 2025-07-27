@@ -1,0 +1,388 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+import math
+import numpy as np
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
+import time
+from typing import List, Tuple, Dict
+
+############################################################################
+#       Ancestors calculation 
+############################################################################
+
+h =  ['01001001010', '101010101']
+#n = len(h)
+K = 14
+
+N  = max(len(x) for x in h )
+m  = len(h)
+
+def parikh(word):
+    return np.array([word.count("0"), word.count("1")])
+
+def applyh(w):
+    return ''.join(h[int(ch)] for ch in w)
+
+def applyh_iterative(w,k):
+    for i in range(k):
+        w=applyh(w)
+    return w
+
+def splits(h,m):
+    S = []
+    for i in range(m + 1):
+        S.append([])
+    S[m].append([m, parikh(''), parikh('')])
+    for A in range(m):
+        w = h[A]
+        for i in range(len(w) + 1):
+            S[m].append([A, parikh(w[:i]), parikh(w[i:])])
+        for i in range(len(w)):
+            S[int(w[i])].append([A, parikh(w[:i]), parikh(w[i + 1:])])    
+    return S
+
+S= splits(h,m)
+    
+def Con(x, y):
+    z1 = (5 * x - 4 * y)
+    z2 = (-4 * x + 7 * y)
+    if z1 % 19 == 0 and z2 % 19 == 0:
+        # // : integer division
+        return [z1 // 19, z2 // 19]
+    return None
+
+
+def parents(t):  # Finds the parents of a template t
+    parents=[]
+    for A in S[t[0]]:
+        for B in S[t[1]]:
+            for C in S[t[2]]:
+                s1p2 = A[2]+B[1]
+                s2p3 = B[2]+C[1]
+                v1 = np.array([t[15],t[16]])-s2p3+s1p2
+                C1= Con(v1[0], v1[1])
+                if C1 is not None :
+                    for D in S[t[3]]:
+                        s3p4 = C[2]+D[1]
+                        v2 =np.array([t[17],t[18]])-s3p4+s2p3
+                        C2 = Con(v2[0], v2[1])
+                        if C2 is not None :
+                            for E in S[t[4]]:
+                                s4p5 = D[2]+E[1]
+                                v3 = np.array([t[19],t[20]])-s4p5+s3p4
+                                C3= Con(v3[0], v3[1])
+                                if C3 is not None:
+                                    for F in S[t[5]]:
+                                        s5p6 = E[2]+F[1]
+                                        v4 = np.array([t[21],t[22]])-s5p6+s4p5
+                                        C4= Con(v4[0], v4[1])
+                                        if C4 is not None:
+                                            for G in S[t[6]]:
+                                                s6p7 = F[2]+G[1]
+                                                v5 = np.array([t[23],t[24]])-s6p7+s5p6
+                                                C5= Con(v5[0], v5[1])
+                                                if  C5 is not None:
+                                                    for H in S[t[7]]:
+                                                        s7p8 = G[2]+H[1]
+                                                        v6 = np.array([t[25],t[26]])-s7p8+s6p7
+                                                        C6 = Con(v6[0], v6[1])
+                                                        if C6 is not None:
+                                                            for L in S[t[8]]:
+                                                                    s8p9 = H[2]+L[1]
+                                                                    v7 = np.array([t[27],t[28]])-s8p9+s7p8
+                                                                    C7= Con(v7[0], v7[1])
+                                                                    if C7 is not None:
+                                                                        for M in S[t[9]]:
+                                                                            s9p10 = L[2]+M[1]
+                                                                            v8 = np.array([t[29],t[30]])-s9p10+s8p9
+                                                                            C8= Con(v8[0], v8[1])
+                                                                            if C8 is not None :
+                                                                                for N in S[t[10]]:
+                                                                                    s10p11= M[2]+N[1]
+                                                                                    v9= np.array([t[31],t[32]])-s10p11+s9p10
+                                                                                    C9= Con(v9[0], v9[1])
+                                                                                    if C9 is not None:
+                                                                                        for O in S[t[11]]:
+                                                                                            s11p12= N[2]+O[1]
+                                                                                            v10= np.array([t[33],t[34]])-s11p12+s10p11
+                                                                                            C10= Con(v10[0], v10[1])
+                                                                                            if C10 is not None:
+                                                                                                for P in S[t[12]]:
+                                                                                                    s12p13= O[2]+P[1]
+                                                                                                    v11= np.array([t[35],t[36]])-s12p13+s11p12
+                                                                                                    C11= Con(v11[0], v11[1])
+                                                                                                    if C11 is not None:
+                                                                                                        for Q in S[t[13]]:
+                                                                                                            s13p14= P[2]+Q[1]
+                                                                                                            v12= np.array([t[37],t[38]])-s13p14+s12p13
+                                                                                                            C12= Con(v12[0], v12[1])
+                                                                                                            if C12 is not None:
+                                                                                                                for R in S[t[14]]:
+                                                                                                                    s14p15= Q[2]+R[1]
+                                                                                                                    v13= np.array([t[39],t[40]])-s14p15+s13p14
+                                                                                                                    C13= Con(v13[0], v13[1])
+                                                                                                                    if C13 is not None:
+                                                                                                                        parents.append ([A[0],B[0],C[0],D[0],E[0],F[0],G[0],H[0],L[0],M[0],N[0],O[0],P[0],Q[0],R[0],      
+                                                                                                                                         (C1[0]), (C1[1]),    (C2[0]), (C2[1]),   (C3[0]), (C3[1]),    (C4[0]), (C4[1]),  
+                                                                                                                                         (C5[0]), (C5[1]),    (C6[0]), (C6[1]),   (C7[0]), (C7[1]),    (C8[0]), (C8[1]),   
+                                                                                                                                         (C9[0]), (C9[1]),    (C10[0]),(C10[1]),  (C11[0]),(C11[1]),   (C12[0]),(C12[1]),   
+                                                                                                                                         (C13[0]),(C13[1]) ]) 
+    parents=set(map(tuple, parents))
+    parents=list(parents)
+    return parents
+    
+
+def ancestors_with_levels(T):
+    level = 0
+    V = set(map(tuple, T))   # V is the set that collects all the ancestors
+    U = list(T)              # the set of ancestors at level i
+    levels = [U]             # lists of the ancestors at different levels.
+
+    while len(U) > 0:
+        newtem = set()
+        for u in U:
+            newtem.update(map(tuple, parents(u)))
+        newtem.difference_update(V)  # remove the ones that appeared before
+        V.update(newtem)             # add new ancestors to the set V
+        U = list(newtem)
+        if U:
+            level += 1
+            print(f'at level {level} there are {len(U)} new templates.')
+            levels.append(U)
+
+    all_ancestors = list(V)
+    return levels, all_ancestors
+
+
+
+############################################################################
+#     Filtering Factors
+############################################################################
+
+
+
+##INPUT:  a string: word, a natural number: mod (n), a natural number: residue class(r), a natural number: max length
+##OUTPUT: all different substrings of the word having length L where L= r (mod n) and L<max length
+def factors_len_mod(word: str, mod: int, residue: int, max_len: int | None = None) -> set[str]:
+    n       = len(word)
+    max_k   = min(n , max_len) 
+    return {
+        word[i:i+k]
+        for k in range(1, max_k + 1) if k % mod == residue
+        for i in range(n - k + 1)
+    }
+
+
+AMAP: Dict[int, str] = {0: "0", 1: "1", 2: ""}
+
+def minimal_realisation(tpl):
+    tpl = [int(float(x)) for x in tpl]  
+    a = tpl[:15]; d = tpl[15:]
+    pairs = [(d[i], d[i+1]) for i in range(0, 26, 2)]
+    sx = sy = 0
+    sigma = [(0,0)]
+    for dx, dy in pairs:
+        sx += dx; sy += dy
+        sigma.append((sx, sy))
+    shift0 = -min(x for x,_ in sigma)
+    shift1 = -min(y for _,y in sigma)
+    blocks = [(shift0+x, shift1+y) for x,y in sigma]
+    fixed0 = sum(1 for x in a if x == 0)
+    fixed1 = sum(1 for x in a if x == 1)
+    Lmin = fixed0 + fixed1 + sum(b0+b1 for b0,b1 in blocks)
+    return  int(Lmin)
+
+
+############################################################################
+#      Realisation check
+############################################################################
+
+def split_template(template: List[int]) -> Tuple[List[int], List[Tuple[int, int]]]:
+    if len(template) != 41:
+        raise ValueError("Templates consist of 41 numbers!: 15 a_i + 26 d_ij.")
+    a = template[:15]
+    d = template[15:]
+    d_pairs = [(d[2*i], d[2*i+1]) for i in range(13)]
+    return a, d_pairs
+
+#INPUT= [delta_1,...,delta_13]
+#OUTPUT=cum where cum[0]=0; cum[i] = Σ_{t=1..i} (d_t1 + d_t2)  (i=1..13)
+def cumulative_deltas(d_pairs: List[Tuple[int, int]]) -> List[int]:
+    cum = [0]
+    s = 0
+    for i in range(13):
+        s += d_pairs[i][0] + d_pairs[i][1]
+        cum.append(s)
+    return cum         # 14 integer values
+
+
+def realises_template(word: str, template: List[int]) -> bool:
+    template = [int(x) for x in template]  
+    a, d_pairs = split_template(template)
+    cum  = cumulative_deltas(d_pairs)                    # [0, Δ1, Δ1+Δ2,Δ1+Δ2+Δ3, ...]
+    
+    S    = sum(cum)                                      # Σ cum[i], i=0..13
+    num_fixed = sum(1 for ai in a if AMAP[ai] != "")     #  #ai != 2
+
+    total = len(word)
+    total_blocks_len = total - num_fixed                 # The sum of the block sizes
+                                                         # 14*X + Σ cum[i] = total_blocks_len
+    rem = total_blocks_len - S
+    if rem % 14 != 0:
+        return False
+    
+    X = rem // 14                                        #X= len(B_1)
+    if X < 0:
+        return False
+                                            
+    block_lengths = [X + c for c in cum]                 # Block lengths: L_i = X + cum[i]
+    if any(L < 0 for L in block_lengths):
+        return False
+    if sum(block_lengths) != total_blocks_len:
+        return False
+    
+    #### determine & check a0, B1, a1, B2, ..., a13, B14, a14 ###
+    pos    = 0  #this is the position starts with 0.--> used in a_i check & block start end positions
+    blocks = []
+    for i in range(14):
+        fixed = AMAP[a[i]]
+        if fixed != "":
+            if pos >= total or word[pos] != fixed:     #this checks if a_i's are matching with the template correctly
+                return False
+            pos += 1                                   #adds 1 to the position if a_i !=""
+        L = block_lengths[i]
+        if pos + L > total:                            #forms the ith block
+            return False
+        blocks.append(word[pos:pos+L])
+        pos += L
+
+    ### checking a_14
+    fixed_last = AMAP[a[14]]
+    if fixed_last != "":
+        if pos >= total or word[pos] != fixed_last:
+            return False
+        pos += 1
+
+    if pos != total:
+        return False
+
+    ### Parikh difference check for the blocks
+    P = [parikh(b) for b in blocks]
+    for i in range(13):
+        expected = np.array(d_pairs[i], dtype=int)
+        actual = P[i+1] - P[i]
+        if not np.array_equal(actual, expected):
+            return False
+
+    return True
+
+
+
+##INPUT: an array of length A of templates, a word, and a maximum size for the factor length
+##OUTPUT= an array of length A of true-false values: true if a factor of length <=factor_size is a realisation of the template
+def is_realised(word,template,factor_size):
+    residue= (minimal_realisation(template))%14
+    factors= list(factors_len_mod(word,14,residue,factor_size))
+    for factor in factors:
+        if realises_template(factor, template):
+            
+            return True
+    return False 
+
+############################################################################
+#      Search Bound
+############################################################################
+def search_bound(N,K,Q):
+    delta_set=[]
+    for t in Q:
+        a,d=split_template(t)
+        cum= cumulative_deltas(d)
+        delta=max(cum)-min(cum)
+        delta_set.append(delta)
+    delta=max(delta_set) #maximum difference of |X_i|-|X_j|
+    return N+K-1 +(K-1 )*(N-2+delta)
+
+############################################################################
+#          Inputs
+############################################################################
+    
+
+t1_1=[0,0,0,    1,1,1,    1,2,0,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,   0,0,   0,0,    0,1,  0,0,  -1,0,  1,-1,   0,0,  0,1, -1,0,  0,0]
+t1_2=[0,0,0,    1,1,1,    1,2,1,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,   0,0,   0,0,    0,1,  0,0,  0,-1,   0,0,   0,0,  0,1, -1,0,  0,0]
+t1_3=[0,0,0,    1,1,1,    0,2,1,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,   0,0,  -1,1,    1,0,  0,0,  0,-1,   0,0,   0,0,  0,1, -1,0,  0,0]
+t1_4=[0,0,0,    1,1,1,    0,2,0,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,   0,0,  -1,1,    1,0,  0,0,  -1,0,  1,-1,   0,0,  0,1, -1,0,  0,0]
+t1_5=[0,0,0,    1,1,0,    0,2,0,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,  -1,1,   0,0,    1,0,  0,0,  -1,0,  1,-1,   0,0,  0,1, -1,0,  0,0]
+t1_6=[0,0,0,    1,1,0,    0,2,1,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,  -1,1,   0,0,    1,0,  0,0,  0,-1,   0,0,   0,0,  0,1, -1,0,  0,0]
+t1_7=[0,0,0,    1,1,0,    1,2,1,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,  -1,1,  1,-1,    0,1,  0,0,  0,-1,   0,0,   0,0,  0,1, -1,0,  0,0]
+t1_8=[0,0,0,    1,1,0,    1,2,0,    1,1,1,  0,0,0,   0,0,   1,0,  0,-1,  -1,1,  1,-1,    0,1,  0,0,  -1,0,  1,-1,   0,0,  0,1, -1,0,  0,0]
+t2_1=[0,0,0,    0,1,1,    1,1,2,    0,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,   0,0,    0,0,  0,1,   0,0,  -1,0,  1,-1,  0,0,  0,1, -1,0]
+t2_2=[0,0,0,    0,1,1,    1,1,2,    1,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,   0,0,    0,0,  0,1,   0,0,  0,-1,   0,0,  0,0,  0,1, -1,0]
+t2_3=[0,0,0,    0,1,1,    1,0,2,    1,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,   0,0,   -1,1,  1,0,   0,0,  0,-1,   0,0,  0,0,  0,1, -1,0]
+t2_4=[0,0,0,    0,1,1,    1,0,2,    0,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,   0,0,   -1,1,  1,0,   0,0,  -1,0,  1,-1,  0,0,  0,1, -1,0]
+t2_5=[0,0,0,    0,1,1,    0,0,2,    0,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,  -1,1,    0,0,  1,0,   0,0,  -1,0,  1,-1,  0,0,  0,1, -1,0]
+t2_6=[0,0,0,    0,1,1,    0,0,2,    1,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,  -1,1,    0,0,  1,0,   0,0,  0,-1,   0,0,  0,0,  0,1, -1,0]
+t2_7=[0,0,0,    0,1,1,    0,1,2,    1,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,  -1,1,   1,-1,  0,1,   0,0,  0,-1,   0,0,  0,0,  0,1, -1,0]
+t2_8=[0,0,0,    0,1,1,    0,1,2,    0,1,1,  1,0,0,   0,0,   0,0,  1,0,   0,-1,  -1,1,   1,-1,  0,1,   0,0,  -1,0,  1,-1,  0,0,  0,1, -1,0]
+
+t3_1=[0,0,1,    1,1,1,    2,1,0,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,   0,0,    0,0, -1,1,  1,-1,   0,0,  -1,0,  0,1,  0,0,  0,0]
+t3_2=[0,0,1,    1,1,1,    2,1,1,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,   0,0,    0,0,  0,0,   0,0,   0,0,  -1,0,  0,1,  0,0,  0,0]
+t3_3=[0,0,1,    1,1,1,    2,0,1,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,   0,0,   -1,1, 1,-1,   0,0,   0,0,  -1,0,  0,1,  0,0,  0,0] 
+t3_4=[0,0,1,    1,1,1,    2,0,0,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,   0,0,   -1,1,  0,0,  1,-1,   0,0,  -1,0,  0,1,  0,0,  0,0]
+t3_5=[0,0,1,    1,1,0,    2,0,0,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,  -1,1,    0,0,  0,0,  1,-1,   0,0,  -1,0,  0,1,  0,0,  0,0]
+t3_6=[0,0,1,    1,1,0,    2,0,1,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,  -1,1,    0,0, 1,-1,   0,0,   0,0,  -1,0,  0,1,  0,0,  0,0] 
+t3_7=[0,0,1,    1,1,0,    2,1,1,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,  -1,1,   1,-1,  0,0,   0,0,   0,0,  -1,0,  0,1,  0,0,  0,0]
+t3_8=[0,0,1,    1,1,0,    2,1,0,    1,1,0,  0,0,0,  0,-1,   1,0,  0,0,    0,0,  -1,1,   1,-1, -1,1,  1,-1,   0,0,  -1,0,  0,1,  0,0,  0,0]
+t4_1=[0,0,0,    1,1,1,    1,2,1,    0,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,    0,0,  0,0,  -1,1,  1,-1,   0,0, -1,0,  0,1,  0,0]
+t4_2=[0,0,0,    1,1,1,    1,2,1,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,    0,0,  0,0,   0,0,   0,0,   0,0, -1,0,  0,1,  0,0]
+t4_3=[0,0,0,    1,1,1,    1,2,0,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,    0,0, -1,1,  1,-1,   0,0,   0,0, -1,0,  0,1,  0,0]
+t4_4=[0,0,0,    1,1,1,    1,2,0,    0,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,    0,0, -1,1,   0,0,  1,-1,   0,0, -1,0,  0,1,  0,0]
+t4_5=[0,0,0,    1,1,1,    0,2,0,    0,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  0,0,   0,0,  1,-1,   0,0, -1,0,  0,1,  0,0]
+t4_6=[0,0,0,    1,1,1,    0,2,0,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  0,0,  1,-1,   0,0,   0,0, -1,0,  0,1,  0,0]
+t4_7=[0,0,0,    1,1,1,    0,2,1,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  1,-1,  0,0,   0,0,   0,0, -1,0,  0,1,  0,0]
+t4_8=[0,0,0,    1,1,1,    0,2,1,    0,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  1,-1, -1,1,  1,-1,   0,0, -1,0,  0,1,  0,0]
+
+
+
+T=[t1_1,t1_2,t1_3,t1_4, t1_5,t1_6,t1_7,t1_8,  t2_1,t2_2,t2_3,t2_4, t2_5,t2_6,t2_7,t2_8, t3_1,t3_2,t3_3,t3_4, t3_5,t3_6,t3_7,t3_8,t4_1,t4_2,t4_3,t4_4, t4_5,t4_6,t4_7,t4_8]
+
+
+
+############################################################################
+#Ancestors calculation 
+############################################################################
+
+print('==============================================================================')
+print('======================== First Part  =========================================')
+print('==============================================================================\n')
+print('We are now computing all the ancestors of tau:')
+Ancestors          =   ancestors_with_levels(T)
+Q                  =   list(Ancestors[-1])
+print('\n* In total there are',len(Q),'ancestors.','\n')
+
+print('==============================================================================')
+print('======================== Second Part  ========================================')
+print('==============================================================================\n')
+print('In this second part we will check if any of the factors are realized by a factor of h^omega(0).\n')
+
+
+print('\n********************************************************************','\n')
+print('Now we check if the templates are realized by a factor of length <=Search Bound= N+k-1 +(k-1 )*(N-2+delta)\n')
+
+
+word        = applyh_iterative('0',4)
+Search_bound= search_bound(N,K,Q)
+print('* Search Bound is computed:', Search_bound, '. Checking if the templates are realized by a factor...\n')
+
+
+def is_realised_parallel(template):
+    return is_realised(word, template, Search_bound)
+
+if __name__ == '__main__':
+    with ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        resultsbig = list(executor.map(is_realised_parallel, Q, chunksize=64))
+    R1 = resultsbig
+    if all(not x for x in R1):
+        print('* The templates does not appear in a factor of length <= ',Search_bound,'.\n  Hence h^ω(a) is 14-abelian power free.')  
+

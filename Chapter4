@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+
 ##checks abelian power freenes
 def avoids_abelian_k_power(sequence: str, k: int) -> bool:
     n = len(sequence)
@@ -13,8 +16,12 @@ def avoids_abelian_k_power(sequence: str, k: int) -> bool:
 
 
 
-##given a sequence of length n' extends it to all valid continuations of length n'+1
+##given a sequence extends it to all valid continuations
 def extend_partial_sequence(n: int, k: int, forbidden_substrings: list[str], current_sequence: str, results: list[str]) -> None:
+    """
+    Geri izlemeli (backtracking) şekilde diziyi kurar.
+    Kurallar ihlal edilirse o dal erken kesilir.
+    """
     if len(current_sequence) == n:
         results.append(current_sequence)
         return
@@ -71,26 +78,24 @@ valid_sequences_prop_4_4_length78 = generate_valid_binary_sequences(78, forbidde
 
 
 ######################################################################
-print('============= Proposition 4.2 ============= ')
-print("The sequences of length 17 avoiding",forbidden_substrings_prop_4_2 ,"are/is" ,valid_sequences_prop_4_2_length17  )
-print("The sequences of length 18 avoiding",forbidden_substrings_prop_4_2 ,"are/is" ,valid_sequences_prop_4_2_length18  )
+print('============= Proposition 4.2 =============\n ')
+print('We focus on abelian',k_prop_4_2,'power free words\n')
+print("* The sequences of length 17 avoiding",forbidden_substrings_prop_4_2 ,"are/is" ,valid_sequences_prop_4_2_length17,'.')
+print("* The sequences of length 18 avoiding",forbidden_substrings_prop_4_2 ,"are/is" ,valid_sequences_prop_4_2_length18,'.\n')
 
 
 
 ######################################################################
-print('============= Proposition 4.3 ============= ')
-
-print("The sequences of length 24 avoiding",forbidden_substrings_prop_4_3 ,"are/is" ,valid_sequences_prop_4_3_length24  )
-print("The sequences of length 25 avoiding",forbidden_substrings_prop_4_3 ,"are/is" ,valid_sequences_prop_4_3_length25  )
+print('============= Proposition 4.3 ============= \n ')
+print('We focus on abelian',k_prop_4_3,'power free words\n')
+print("* The sequences of length 24 avoiding",forbidden_substrings_prop_4_3 ,"are/is" ,valid_sequences_prop_4_3_length24,'.')
+print("* The sequences of length 25 avoiding",forbidden_substrings_prop_4_3 ,"are/is" ,valid_sequences_prop_4_3_length25,'.\n')
 
 
 
 ######################################################################
-print('============= Proposition 4.4 ============= ')
-
-print("The sequences of length 77 avoiding",forbidden_substrings_prop_4_4 ,"are/is" ,valid_sequences_prop_4_4_length77  )
-print("The sequences of length 78 avoiding",forbidden_substrings_prop_4_4 ,"are/is" ,valid_sequences_prop_4_4_length78  )
-
-    
-    
+print('============= Proposition 4.4 =============\n ')
+print('We focus on abelian',k_prop_4_4,'power free words\n')
+print("* The sequences of length 77 avoiding",forbidden_substrings_prop_4_4 ,"are/is" ,valid_sequences_prop_4_4_length77,'.')
+print("* The sequences of length 78 avoiding",forbidden_substrings_prop_4_4 ,"are/is" ,valid_sequences_prop_4_4_length78,'.\n')
 
