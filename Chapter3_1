@@ -138,7 +138,7 @@ def avoids_abelian_k_power(seq: str, k: int) -> bool:
     for block_len in range(n // k, 0, -1):             # ↓ big → small
         full_len = block_len * k                       # the length of the longest tested factor 
         for start in range(n - full_len + 1):
-            # the firs block used as a 'template' 
+            # the first block used as a 'template' 
             tpl = sorted(seq[start : start + block_len])
 
             # checks whether the other (k-1) block is a permutation of the first one.
@@ -274,14 +274,14 @@ def find_realising_factors(text: str,
     D = template[9:]
     k = 8
 
-    # şablon sabitleri
+    # template constants
     s = sum(1 for a in A if a != 2)
     _, offset = _length_constants(D)
 
     matches: List[Tuple[int, int, str]] = []
     n = len(text)
 
-    # en uzun faktörden en küçüğüne
+    #Length of the factor longest -> shortest: it is faster this way for our purposes
     for L in range(n, 0, -1):
         if L < s + offset:            # minimum length check
             continue
@@ -302,14 +302,12 @@ t1_1=(0,0,1,  0,2,0,  1,0,0,     0,-1,   1,0,  -1,1,  0,0,   1,-1, -1,0,   0,1)
 t1_2=(0,0,1,  1,2,0,  1,0,0,     0,-1,   1,0,   0,0,  -1,1,  1,-1, -1,0,   0,1)
 t1_3=(0,0,1,  1,2,1,  1,0,0,     0,-1,   1,0,   0,0,  0,0,   0,0,  -1,0,   0,1)
 t1_4=(0,0,1,  0,2,1,  1,0,0,     0,-1,   1,0,  -1,1,  1,-1,  0,0,  -1,0,   0,1)
-
 t2_1=(0,0,1,  0,2,0,  1,0,0,     1,0,   -1,0,   1,0,  0,0,  -1,0,  1,0,   -1,0)
 t2_2=(0,0,1,  1,2,0,  1,0,0,     1,0,   0,-1,   0,1,  0,0,  -1,0,  1,0,   -1,0)
 t2_3=(0,0,1,  1,2,1,  1,0,0,     1,0,   0,-1,   0,1,  0,0,   0,-1, 0,1,   -1,0)
 t2_4=(0,0,1,  0,2,1,  1,0,0,     1,0,   -1,0,   1,0,  0,0,   0,-1, 0,1,   -1,0)
 
 t = (n, n, n, n, n, n, n, n, n, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  # The template for Abelian 8-powers
-    
 T=[t1_1,t1_2,t1_3,t1_4,t2_1,t2_2,t2_3,t2_4]    
 
 template_t2_1_grandgrandparent        =  (1, 0, 1, 0, 0, 1, 0, 1, 0,   -1, 0,  1, 0,  -1, 0,     0, 0,    1, 0,    -1, 0,  1, 0)
@@ -318,13 +316,11 @@ template_t2_1_grandgrandparent_format =  split_9_then_pairs(template_t2_1_grangr
 template_t2_1_grandparent             =  (0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, -1, 0, 0, 0, 1, 0, -1, 0, 1, -1)
 template_t2_1_grandparent_format      =  split_9_then_pairs(template_t2_1_grandparent)
 
-
 template_t2_1_mother                  =  (0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -1, 0, 1, 0, -1, 0, 1, 0)
 template_t2_1_mother_format           =  split_9_then_pairs(template_t2_1_mother)
 
 t2_1                                  =  (0,0,1,  0,2,0,  1,0,0,     1,0,   -1,0,   1,0,  0,0,  -1,0,  1,0,   -1,0)
 template_t2_1_format                  =  split_9_then_pairs(t2_1)
-
 print('================================================================================================')
 print('======================== First Part  ===========================================================')
 print('================================================================================================\n')
@@ -335,6 +331,7 @@ print('In total there are',len(Q),'ancestors.',' \n' )
 print('Now we check if the templates are realized by a factor of length <=Search Bound= N+k-1 +(k-1 )*(N-2+delta)\n')
 Search_bound= search_bound(7,k,Q)
 print('* Search Bound is computed:', Search_bound, '.\n')
+
 print('================================================================================================')
 print('======================== Second Part  ==========================================================')
 print('================================================================================================\n')
@@ -342,18 +339,15 @@ print('Now, we check the parent relations of t_8, t(2.1), t_mother(2.1), t_gp(2.
 print('********************************************************************','\n')
 print('First, we check that t_mother(2_1) is a parent of t(2.1):')
 if template_t2_1_mother in parents(t2_1):
-    print('mother template=',template_t2_1_mother_format ,' \n is in parents of t2_1=',template_t2_1_format,'.\n'   )
-    
+    print('mother template=',template_t2_1_mother_format ,' \n is in parents of t2_1=',template_t2_1_format,'.\n'   )   
 print('********************************************************************\n')
 print('Then, we check that t_gp(2_1) is a parent of t_mother(2.1):')
 if template_t2_1_grandparent in parents(template_t2_1_mother):
-    print('grandparent template=',template_t2_1_grandparent_format  ,' \n is in parents of mother template=',template_t2_1_mother_format,'.\n')
-    
+    print('grandparent template=',template_t2_1_grandparent_format  ,' \n is in parents of mother template=',template_t2_1_mother_format,'.\n')   
 print('********************************************************************\n')
 print('Then, we check that t_ggp(2_1) is a parent of t_p(2.1):')
 if template_t2_1_grangranddparent   in parents(template_t2_1_grandparent):
     print('grand grandparent template=',template_t2_1_grandgrandparent_format  ,' \n is in parents of grandparent template=',template_t2_1_grandparent_format,'.\n')
-    
 print('********************************************************************\n')
 ##can take some time
 print('Now, we check that t2_1 is a parent of t_8: this can take some time...')
@@ -369,13 +363,11 @@ word_grandgrandparent=applyh_iterative('0',2)
 grandgrandparent_check=find_realising_factors( word_grandgrandparent, template_t2_1_grandgrandparent_format )
 print('h^2 has a realization of t_ggp(2.1)=',template_t2_1_grandgrandparent_format  )
 print('printing: start position, end position, factor itself',grandgrandparent_check[0],'.\n')
-
 print('********************************************************************','\n')
 word_grandparent=applyh(word_grandgrandparent[17:30])
 grandparent_check=find_realising_factors( word_grandparent, template_t2_1_grandparent_format )
 print('h^3 has a realization of t_gp(2.1)=',template_t2_1_grandparent_format  )
 print('printing:  factor itself',grandparent_check[0],'.\n')
-
 print('********************************************************************','\n')
 word_mother=applyh(word_grandparent[3:78])
 mother_check=find_realising_factors( word_mother, template_t2_1_mother_format )
@@ -383,7 +375,6 @@ print('h^4 has a realization of t_mother(2.1)=',template_t2_1_mother_format  )
 print('printing a part of the factor only:',mother_check[0][2][0:30],'...',mother_check[0][2][-30:-1] ,'.\n')
 # uncomment to see the full word:
 #print(mother_check[0][2])
-
 print('********************************************************************','\n')
 word_t2_1=applyh(word_mother[0:470])
 t2_1_check=find_realising_factors( word_t2_1, template_t2_1_format )
@@ -399,6 +390,5 @@ word_t8=applyh(word_t2_1[3:2935])
 is_avoid, info= avoids_abelian_k_power(word_t8,8)
 if not is_avoid and word_t8 in applyh_iterative('0',6): #checks if word_t8 is a factor of h^6('0') and if there is an abelian 8 power
     print('There is an abelian power in h^6(0)')
-
 #uncomment to see the factor
 #print(info)
