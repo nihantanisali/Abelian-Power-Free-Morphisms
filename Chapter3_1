@@ -7,15 +7,10 @@
 import numpy as np
 from collections.abc import Sequence
 from typing import Sequence, Tuple, Optional, List, TypeVar, Iterable
-
-
-
 ############################################################################
 #This first part computes: Parents/Ancestors/Parikh vectors
 ############################################################################
 # indices correspond to: 0->a, 1->b, 2->epsilon. 
-
-
 h = ['0100010', '10101']
 n = len(h)
 k = 8
@@ -29,7 +24,6 @@ def parikh(s):  # Parikh vector of string s
         p[int(s[i])] = p[int(s[i])] + 1
     return p
 
-
 def applyh(w):  # apply morphism f to w
     u = ''
     for i in range(len(w)):
@@ -41,7 +35,6 @@ def applyh_iterative(w,k):
         w=applyh(w)
     return w
 
-
 def splits(h,n):
     S = []
     for i in range(n + 1):
@@ -52,12 +45,9 @@ def splits(h,n):
         for i in range(len(w) + 1):
             S[n].append([A, parikh(w[:i]), parikh(w[i:])])
         for i in range(len(w)):
-            S[int(w[i])].append([A, parikh(w[:i]), parikh(w[i + 1:])])
-            
+            S[int(w[i])].append([A, parikh(w[:i]), parikh(w[i + 1:])])     
     return S
-
 S = splits(h,n)
-
 
 def Con(x,y):
     z1=( 3*x - 2*y )/11
@@ -68,9 +58,6 @@ def Con(x,y):
     else :
         return 0 
     # S--->S[1] to avoid calculating the parikh vectors in each for loop in 'parents'
-
-
-
 
 def parents(t):  # Finds the parents of a template t
     # 'parents' stores all arrays with possibly repetition, 'parentsnorep' is without repetiton which is what the function return
@@ -116,51 +103,34 @@ def parents(t):  # Finds the parents of a template t
                                                                     par.append([A[0], B[0], C[0], D[0], E[0], F[0], G[0], H[0], L[0], 
                                                                                 int(C1[0]), int(C1[1]), int(C2[0]), int(C2[1]), int(C3[0]), 
                                                                                 int(C3[1]), int(C4[0]), int(C4[1]), int(C5[0]), int(C5[1]), 
-                                                                                int(C6[0]), int(C6[1]), int(C7[0]), int(C7[1])])
-
-    
-                                                                    
-                                                                      
-    
+                                                                                int(C6[0]), int(C6[1]), int(C7[0]), int(C7[1])])                                               
     par=set(map(tuple, par))
     par=list(par)
     return par
-
-
-
 
 def ancestors_with_levels(T):
     level = 0
     V = set(map(tuple, T))   # V is the set that collects all the ancestors
     U = list(T)              # the set of ancestors at level i
     levels = [U]             # lists of the ancestors at different levels.
-
     while len(U) > 0:
         newtem = set()
         for u in U:
             newtem.update(map(tuple, parents(u)))
-
         newtem.difference_update(V)  # remove the ones that appeared before
         V.update(newtem)             # add new ancestors to the set V
-
         U = list(newtem)
         if U:
             level += 1
             print(f'at level {level} there are {len(U)} new templates.')
             levels.append(U)
-
     all_ancestors = list(V)
     return levels, all_ancestors
-
-
-
-
 
 ############################################################################
 #This second part computes abelian power freenes, length of the blocks
 # Blocks: big length---->small length more efficient for our purposes
 ############################################################################
-
 def avoids_abelian_k_power(seq: str, k: int) -> bool:
     n = len(seq)
 
@@ -175,19 +145,13 @@ def avoids_abelian_k_power(seq: str, k: int) -> bool:
             if all(
                 sorted(seq[start + j*block_len : start + (j+1)*block_len]) == tpl
                 for j in range(1, k)
-            ):
-                
+            ):      
                 return False ,[start, full_len, seq[start: full_len] ]                      # found abelian k-power 
 
     return True   , []                                    # found none 
-
-
-
 ############################################################################
 #This third part checks template realization
 ############################################################################
-
-
 
 ############################################################################
 #Formating of template  (a_0,...,a_9, D_1,...,D_7 )
@@ -222,7 +186,6 @@ def search_bound(N,K,Q):
     return N+K-1 +(K-1 )*(N-2+delta)
 
 #############################################################################
-
 Letter    = int                 # 0, 1, or 2 (2 = ε)
 ParikhVec = Tuple[int, int]     # for a binary alphabet
 
@@ -267,8 +230,7 @@ def is_realisation(word: str,
     sizes = [B + cum[i] for i in range(k)]  # all eight |X_i|
     if any(sz < 0 for sz in sizes):
         return False                        # some block would be negative
-    
-    
+     
     pos = 0
     blocks: List[str] = []
     
@@ -300,8 +262,7 @@ def is_realisation(word: str,
     for i, d in enumerate(D):
         diff = (P[i + 1][0] - P[i][0], P[i + 1][1] - P[i][1])
         if diff != d:
-            return False
-    
+            return False 
     return True
 
 # --- factor finder  ---------------------------------------------------
@@ -333,10 +294,6 @@ def find_realising_factors(text: str,
                 matches.append((start, start + L, factor))
     return matches
 
-
-
-
-
 ###########################################################################
 # INPUTS
 ###########################################################################
@@ -367,8 +324,6 @@ template_t2_1_mother_format           =  split_9_then_pairs(template_t2_1_mother
 
 t2_1                                  =  (0,0,1,  0,2,0,  1,0,0,     1,0,   -1,0,   1,0,  0,0,  -1,0,  1,0,   -1,0)
 template_t2_1_format                  =  split_9_then_pairs(t2_1)
-
-
 
 print('================================================================================================')
 print('======================== First Part  ===========================================================')
@@ -447,4 +402,3 @@ if not is_avoid and word_t8 in applyh_iterative('0',6): #checks if word_t8 is a 
 
 #uncomment to see the factor
 #print(info)
-
