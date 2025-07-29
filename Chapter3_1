@@ -311,7 +311,7 @@ t = (n, n, n, n, n, n, n, n, n, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)  # The
 T=[t1_1,t1_2,t1_3,t1_4,t2_1,t2_2,t2_3,t2_4]    
 
 template_t2_1_grandgrandparent        =  (1, 0, 1, 0, 0, 1, 0, 1, 0,   -1, 0,  1, 0,  -1, 0,     0, 0,    1, 0,    -1, 0,  1, 0)
-template_t2_1_grandgrandparent_format =  split_9_then_pairs(template_t2_1_grangranddparent )
+template_t2_1_grandgrandparent_format =  split_9_then_pairs(template_t2_1_grandgrandparent )
 
 template_t2_1_grandparent             =  (0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, -1, 0, 0, 0, 1, 0, -1, 0, 1, -1)
 template_t2_1_grandparent_format      =  split_9_then_pairs(template_t2_1_grandparent)
@@ -346,7 +346,7 @@ if template_t2_1_grandparent in parents(template_t2_1_mother):
     print('grandparent template=',template_t2_1_grandparent_format  ,' \n is in parents of mother template=',template_t2_1_mother_format,'.\n')   
 print('********************************************************************\n')
 print('Then, we check that t_ggp(2_1) is a parent of t_p(2.1):')
-if template_t2_1_grangranddparent   in parents(template_t2_1_grandparent):
+if template_t2_1_grandgrandparent   in parents(template_t2_1_grandparent):
     print('grand grandparent template=',template_t2_1_grandgrandparent_format  ,' \n is in parents of grandparent template=',template_t2_1_grandparent_format,'.\n')
 print('********************************************************************\n')
 ##can take some time
