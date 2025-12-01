@@ -158,8 +158,8 @@ def ancestors_with_levels(T):
 #     Filtering Factors
 ############################################################################
 
-##INPUT:  a string: word, a natural number: mod (n), a natural number: residue class(r), a natural number: max length
-##OUTPUT: all different substrings of the word having length L where L= r (mod n) and L<max length
+##INPUT  : a string: word, a natural number: mod (n), a natural number: residue class(r), a natural number: max length
+##OUTPUT : all different substrings of the word having length L where L= r (mod n) and L<max length
 def factors_len_mod(word: str, mod: int, residue: int, max_len: int | None = None) -> set[str]:
     n       = len(word)
     max_k   = min(n , max_len) 
@@ -171,6 +171,8 @@ def factors_len_mod(word: str, mod: int, residue: int, max_len: int | None = Non
 
 AMAP: Dict[int, str] = {0: "0", 1: "1", 2: ""}
 
+##INPUT  : a template of the form t=[a_1,...,a_15, d_11,d_12,...,d_131,d_132]
+##OUTPUT : the minimum length of the words realising t. 
 def minimal_realisation(tpl):
     tpl = [int(float(x)) for x in tpl]  
     a = tpl[:15]; d = tpl[15:]
@@ -187,9 +189,14 @@ def minimal_realisation(tpl):
     fixed1 = sum(1 for x in a if x == 1)
     Lmin = fixed0 + fixed1 + sum(b0+b1 for b0,b1 in blocks)
     return  int(Lmin)
+    
 ############################################################################
 #      Realisation check
 ############################################################################
+
+
+##INPUT  : a template of the form t=[a_1,...,a_15, d_11,d_12,...,d_131,d_132]
+##OUTPUT : the template of the form t=([a_1,...,a_15], [(d_11,d_12),..., (d_131,d_132)] )
 def split_template(template: List[int]) -> Tuple[List[int], List[Tuple[int, int]]]:
     if len(template) != 41:
         raise ValueError("Templates consist of 41 numbers!: 15 a_i + 26 d_ij.")
@@ -198,36 +205,39 @@ def split_template(template: List[int]) -> Tuple[List[int], List[Tuple[int, int]
     d_pairs = [(d[2*i], d[2*i+1]) for i in range(13)]
     return a, d_pairs
 
-#INPUT= [delta_1,...,delta_13]
-#OUTPUT=cum where cum[0]=0; cum[i] = Σ_{t=1..i} (d_t1 + d_t2)  (i=1..13)
+#INPUT  : Delta's of the template: [(d_11,d_12),..., (d_131,d_132)]
+#OUTPUT : cumul where cumul[0]=0; cumul[i] = Σ_{t=1..i} (d_t1 + d_t2)  (i=1..13), 
+##                       that is "the length of the ith block"- "the length of the first block"
 def cumulative_deltas(d_pairs: List[Tuple[int, int]]) -> List[int]:
-    cum = [0]
+    cumul = [0]
     s = 0
     for i in range(13):
         s += d_pairs[i][0] + d_pairs[i][1]
-        cum.append(s)
-    return cum         # 14 integer values
+        cumul.append(s)
+    return cumul         # 14 integer values
+
+
 
 def realises_template(word: str, template: List[int]) -> bool:
     template = [int(x) for x in template]  
     a, d_pairs = split_template(template)
-    cum  = cumulative_deltas(d_pairs)                    # [0, Δ1, Δ1+Δ2,Δ1+Δ2+Δ3, ...]
+    cumul  = cumulative_deltas(d_pairs)                    # [0, Δ1, Δ1+Δ2,Δ1+Δ2+Δ3, ...]
     
-    S    = sum(cum)                                      # Σ cum[i], i=0..13
-    num_fixed = sum(1 for ai in a if AMAP[ai] != "")     #  #ai != 2
+    S    = sum(cumul)                                      # Σ cumul[i], i=0..13
+    num_fixed = sum(1 for ai in a if AMAP[ai] != "")       #  #ai != 2
 
     total = len(word)
-    total_blocks_len = total - num_fixed                 # The sum of the block sizes
-                                                         # 14*X + Σ cum[i] = total_blocks_len
+    total_blocks_len = total - num_fixed                   # The sum of the block sizes
+                                                           # 14*X + Σ cumul[i] = total_blocks_len
     rem = total_blocks_len - S
     if rem % 14 != 0:
         return False
     
-    X = rem // 14                                        #X= len(B_1)
+    X = rem // 14                                          #X= len(B_1)
     if X < 0:
         return False
                                             
-    block_lengths = [X + c for c in cum]                 # Block lengths: L_i = X + cum[i]
+    block_lengths = [X + c for c in cumul]                 #Block lengths: L_i = X + cumul[i]
     if any(L < 0 for L in block_lengths):
         return False
     if sum(block_lengths) != total_blocks_len:
@@ -239,11 +249,11 @@ def realises_template(word: str, template: List[int]) -> bool:
     for i in range(14):
         fixed = AMAP[a[i]]
         if fixed != "":
-            if pos >= total or word[pos] != fixed:     #this checks if a_i's are matching with the template correctly
+            if pos >= total or word[pos] != fixed:         #this checks if a_i's are matching with the template correctly
                 return False
-            pos += 1                                   #adds 1 to the position if a_i !=""
+            pos += 1                                       #adds 1 to the position if a_i !=""
         L = block_lengths[i]
-        if pos + L > total:                            #forms the ith block
+        if pos + L > total:                                #forms the ith block
             return False
         blocks.append(word[pos:pos+L])
         pos += L
@@ -268,8 +278,8 @@ def realises_template(word: str, template: List[int]) -> bool:
 
     return True
 
-##INPUT: an array of length A of templates, a word, and a maximum size for the factor length
-##OUTPUT= an array of length A of true-false values: true if a factor of length <=factor_size is a realisation of the template
+##INPUT  : an array of length A of templates, a word, and a maximum size for the factor length
+##OUTPUT : an array of length A of true-false values: true if a factor of length <=factor_size is a realisation of the template
 def is_realised(word,template,factor_size):
     residue= (minimal_realisation(template))%14
     factors= list(factors_len_mod(word,14,residue,factor_size))
@@ -282,18 +292,20 @@ def is_realised(word,template,factor_size):
 ############################################################################
 #      Search Bound
 ############################################################################
+##INPUT  : N= max | h(sigma) |, m = |Sigma|=2, Q= Anc (T)  
+##OUTPUT : Search bound in Lemma 3.5
 def search_bound(N,K,Q):
     delta_set=[]
     for t in Q:
         a,d=split_template(t)
-        cum= cumulative_deltas(d)
-        delta=max(cum)-min(cum)
+        cumul= cumulative_deltas(d)
+        delta=max(cumul)-min(cumul)
         delta_set.append(delta)
     delta=max(delta_set) #maximum difference of |X_i|-|X_j|
     return N+K-1 +(K-1 )*(N-2+delta)
 
 ############################################################################
-#          Inputs
+#     Inputs= parent templates obtained by the sieving technique
 ############################################################################
     
 
@@ -330,6 +342,7 @@ t4_5=[0,0,0,    1,1,1,    0,2,0,    0,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,  
 t4_6=[0,0,0,    1,1,1,    0,2,0,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  0,0,  1,-1,   0,0,   0,0, -1,0,  0,1,  0,0]
 t4_7=[0,0,0,    1,1,1,    0,2,1,    1,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  1,-1,  0,0,   0,0,   0,0, -1,0,  0,1,  0,0]
 t4_8=[0,0,0,    1,1,1,    0,2,1,    0,1,1,  0,0,0,   0,0,   0,-1, 1,0,    0,0,   0,0,   -1,1,  1,-1, -1,1,  1,-1,   0,0, -1,0,  0,1,  0,0]
+
 
 T=[t1_1,t1_2,t1_3,t1_4, t1_5,t1_6,t1_7,t1_8,  t2_1,t2_2,t2_3,t2_4, t2_5,t2_6,t2_7,t2_8, t3_1,t3_2,t3_3,t3_4, t3_5,t3_6,t3_7,t3_8,t4_1,t4_2,t4_3,t4_4, t4_5,t4_6,t4_7,t4_8]
 
